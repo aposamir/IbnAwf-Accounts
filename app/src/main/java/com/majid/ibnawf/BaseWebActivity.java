@@ -1,70 +1,44 @@
 package com.majid.ibnawf;
 
-import android.app.*;
-import android.os.*;
-import android.webkit.*;
-import android.widget.*;
-import android.content.*;
-import android.net.Uri;
-import android.view.View;
-import android.graphics.Bitmap;
-import android.net.http.SslError;
+import android.app.Activity;
+import android.os.Bundle;
+import android.widget.TextView;
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoSession;
+import org.mozilla.geckoview.GeckoView;
 
 public abstract class BaseWebActivity extends Activity {
-  static final String URL = "https://ibn-awf.majid.cfd/app/";
-  protected abstract String role();
+    private static final String URL = "https://ibn-awf.majid.cfd/app/";
+    private static GeckoRuntime runtime;
+    private GeckoSession session;
 
-  @Override public void onCreate(Bundle b) {
-    super.onCreate(b);
-    setContentView(R.layout.activity_web);
-    ((TextView)findViewById(R.id.title)).setText(role());
+    protected abstract String role();
 
-    WebView w = findViewById(R.id.web);
-    WebSettings s = w.getSettings();
-    s.setJavaScriptEnabled(true);
-    s.setDomStorageEnabled(true);
-    s.setDatabaseEnabled(true);
-    s.setAllowFileAccess(true);
-    s.setAllowContentAccess(true);
-    s.setLoadsImagesAutomatically(true);
-    s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+    @Override public void onCreate(Bundle state) {
+        super.onCreate(state);
+        setContentView(R.layout.activity_web);
+        ((TextView)findViewById(R.id.title)).setText(role());
 
-    CookieManager cm = CookieManager.getInstance();
-    cm.setAcceptCookie(true);
-    cm.setAcceptThirdPartyCookies(w, true);
+        GeckoView view = findViewById(R.id.gecko);
+        session = new GeckoSession();
+        session.setContentDelegate(new GeckoSession.ContentDelegate() {});
 
-    w.setWebChromeClient(new WebChromeClient());
-    w.setWebViewClient(new WebViewClient() {
-      @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-        Uri u = request.getUrl();
-        String scheme = u.getScheme();
-        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) return false;
-        try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
-        return true;
-      }
-      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
-        Uri u = Uri.parse(url);
-        String scheme = u.getScheme();
-        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) return false;
-        try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
-        return true;
-      }
-      @Override public void onPageFinished(WebView view, String url) {
-        CookieManager.getInstance().flush();
-        super.onPageFinished(view, url);
-      }
-      @Override public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
-        handler.cancel();
-      }
-    });
+        // Each role Activity runs in its own Android process. GeckoRuntime is
+        // therefore initialized once per role process, keeping role storage isolated.
+        if (runtime == null) {
+            runtime = GeckoRuntime.create(this);
+        }
 
-    // Try embedded WebView first. If this device/server combination closes the
-    // connection, the error page offers a one-tap Chrome fallback.
-    w.loadUrl(URL);
-  }
+        session.open(runtime);
+        view.setSession(session);
+        session.loadUri(URL);
+    }
 
-  @Override public void onBackPressed() {
-    WebView w = findViewById(R.id.web);
-    if (w.canGoBack()) w.goBack(); else super.onBackPressed();
-  }
+    @Override public void onBackPressed() {
+        if (session != null) {
+            session.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
