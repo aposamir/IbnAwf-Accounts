@@ -4,8 +4,11 @@ import android.app.*;
 import android.os.*;
 import android.webkit.*;
 import android.widget.*;
-import android.net.http.SslError;
+import android.content.*;
+import android.net.Uri;
+import android.view.View;
 import android.graphics.Bitmap;
+import android.net.http.SslError;
 
 public abstract class BaseWebActivity extends Activity {
   static final String URL = "https://ibn-awf.majid.cfd/app/";
@@ -24,12 +27,7 @@ public abstract class BaseWebActivity extends Activity {
     s.setAllowFileAccess(true);
     s.setAllowContentAccess(true);
     s.setLoadsImagesAutomatically(true);
-    s.setUseWideViewPort(true);
-    s.setLoadWithOverviewMode(false);
-    s.setJavaScriptCanOpenWindowsAutomatically(true);
-    s.setMediaPlaybackRequiresUserGesture(false);
     s.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
-    s.setUserAgentString(s.getUserAgentString() + " Chrome/140.0.0.0 Mobile");
 
     CookieManager cm = CookieManager.getInstance();
     cm.setAcceptCookie(true);
@@ -37,8 +35,19 @@ public abstract class BaseWebActivity extends Activity {
 
     w.setWebChromeClient(new WebChromeClient());
     w.setWebViewClient(new WebViewClient() {
-      @Override public void onPageStarted(WebView view, String url, Bitmap favicon) {
-        super.onPageStarted(view, url, favicon);
+      @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        Uri u = request.getUrl();
+        String scheme = u.getScheme();
+        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) return false;
+        try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
+        return true;
+      }
+      @Override public boolean shouldOverrideUrlLoading(WebView view, String url) {
+        Uri u = Uri.parse(url);
+        String scheme = u.getScheme();
+        if ("http".equalsIgnoreCase(scheme) || "https".equalsIgnoreCase(scheme)) return false;
+        try { startActivity(new Intent(Intent.ACTION_VIEW, u)); } catch (Exception ignored) {}
+        return true;
       }
       @Override public void onPageFinished(WebView view, String url) {
         CookieManager.getInstance().flush();
@@ -48,6 +57,9 @@ public abstract class BaseWebActivity extends Activity {
         handler.cancel();
       }
     });
+
+    // Try embedded WebView first. If this device/server combination closes the
+    // connection, the error page offers a one-tap Chrome fallback.
     w.loadUrl(URL);
   }
 
