@@ -1,0 +1,1 @@
+package com.majid.ibnawf; public class ShayraSalesActivity extends BaseWebActivity { protected String role(){return "شعيرة التجارية • مدير المبيعات";} protected String url(){return "https://shyra-trad.majid.cfd/app/";} }
