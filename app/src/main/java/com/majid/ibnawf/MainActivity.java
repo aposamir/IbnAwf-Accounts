@@ -1,8 +1,1 @@
-package com.majid.ibnawf;
-import android.app.*; import android.os.*; import android.content.*;
-public class MainActivity extends Activity {
-  public void onCreate(Bundle b){ super.onCreate(b); setContentView(R.layout.activity_main);
-    bind(R.id.manager, ManagerActivity.class); bind(R.id.secretary, SecretaryActivity.class); bind(R.id.supervisor, SupervisorActivity.class); bind(R.id.teacher, TeacherActivity.class); bind(R.id.student, StudentActivity.class);
-  }
-  void bind(int id, Class<?> c){ findViewById(id).setOnClickListener(v->startActivity(new Intent(this,c))); }
-}
+package com.majid.ibnawf; import android.app.*; import android.os.*; import android.content.*; public class MainActivity extends Activity { public void onCreate(Bundle b){super.onCreate(b);setContentView(R.layout.activity_main);bind(R.id.institute,InstituteMenuActivity.class);bind(R.id.shayra,ShayraMenuActivity.class);} void bind(int id,Class<?> c){findViewById(id).setOnClickListener(v->startActivity(new Intent(this,c)));}}
