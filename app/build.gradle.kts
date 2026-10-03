@@ -7,8 +7,15 @@ android {
         applicationId = "com.majid.ibnawf"
         minSdk = 28
         targetSdk = 35
-        versionCode = 2
-        versionName = "1.1"
+        versionCode = 3
+        versionName = "1.2"
+
+        // Xiaomi Mi Max 3 / Snapdragon 636 is arm64-v8a.
+        // Package only that native ABI so GeckoView does not bundle
+        // x86/x86_64/armeabi-v7a copies into the APK.
+        ndk {
+            abiFilters += listOf("arm64-v8a")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
