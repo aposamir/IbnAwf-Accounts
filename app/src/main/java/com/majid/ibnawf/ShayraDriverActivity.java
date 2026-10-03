@@ -1,0 +1,1 @@
+package com.majid.ibnawf; public class ShayraDriverActivity extends BaseWebActivity { protected String role(){return "شعيرة التجارية • السائق";} protected String url(){return "https://shyra-trad.majid.cfd/app/";} }
