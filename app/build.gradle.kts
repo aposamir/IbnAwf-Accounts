@@ -17,5 +17,5 @@ android {
 }
 
 dependencies {
-    implementation("org.mozilla.geckoview:geckoview:157.+")
+    implementation("org.mozilla.geckoview:geckoview:131.+")
 }
