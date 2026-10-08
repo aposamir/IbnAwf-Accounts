@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application android:name=".HostApp" android:label="@string/app_name"
+        android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:usesCleartextTraffic="false" android:allowBackup="false"
+        android:supportsRtl="true">
+        <activity android:name=".NovaAdminActivity" android:process=":nova_admin" android:exported="false"/>
+        <activity android:name=".NovaWaiter1Activity" android:process=":nova_waiter1" android:exported="false"/>
+        <activity android:name=".NovaWaiter2Activity" android:process=":nova_waiter2" android:exported="false"/>
+        <activity android:name=".NovaKitchenActivity" android:process=":nova_kitchen" android:exported="false"/>
+        <activity android:name=".NovaBarActivity" android:process=":nova_bar" android:exported="false"/>
+        <activity android:name=".NovaCashierActivity" android:process=":nova_cashier" android:exported="false"/>
+        <activity android:name=".FirasOwnerActivity" android:process=":firas_owner" android:exported="false"/>
+        <activity android:name=".FirasCustomerActivity" android:process=":firas_customer" android:exported="false"/>
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

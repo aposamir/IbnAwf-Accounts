@@ -1,0 +1,39 @@
+name: Build NOVA and Firas test host APKs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [test-hosts-nova-firas]
+    paths: [".github/workflows/build-test-hosts.yml", "role-hosts/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+      - name: Compile both lightweight apps
+        working-directory: role-hosts
+        run: gradle :app:assembleNovaDebug :app:assembleFirasDebug --no-daemon --stacktrace
+      - name: Assemble two standalone installer downloads
+        run: |
+          mkdir -p output
+          cp role-hosts/app/build/outputs/apk/nova/debug/app-nova-debug.apk output/nova-test-host.apk
+          cp role-hosts/app/build/outputs/apk/firas/debug/app-firas-debug.apk output/firas-test-host.apk
+          ls -lh output
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NOVA-and-Firas-Android-Test-Hosts
+          path: output/*.apk
+          if-no-files-found: error
