@@ -53,7 +53,11 @@ public final class MainActivity extends Activity {
         description.setPadding(dp(12),dp(32),dp(12),0);
         description.setGravity(Gravity.CENTER);
         page.addView(description);
-        setContentView(scroll);
+        LinearLayout shell = new LinearLayout(this);
+        shell.setOrientation(LinearLayout.VERTICAL);
+        shell.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1f));
+        shell.addView(RoleBottomBar.create(this, MainActivity.class));
+        setContentView(shell);
     }
     private TextView label(String text,int size,int color) {
         TextView t=new TextView(this);t.setText(text);t.setTextColor(color);t.setTextSize(size);
