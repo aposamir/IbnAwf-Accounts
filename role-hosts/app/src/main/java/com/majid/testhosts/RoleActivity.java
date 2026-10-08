@@ -74,6 +74,7 @@ abstract class RoleActivity extends Activity {
             }
         });
         page.addView(browser,new LinearLayout.LayoutParams(-1,0,1));
+        page.addView(RoleBottomBar.create(this, getClass()));
         setContentView(page);
         browser.loadUrl(BuildConfig.HOST_URL);
     }
